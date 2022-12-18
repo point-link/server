@@ -16,29 +16,6 @@ function uint8ArrayEqual(arr1: Uint8Array, arr2: Uint8Array) {
   return true;
 }
 
-function randomUint8() {
-  let num = 0;
-  for (let i = 0; i < 8; i++) {
-    num <<= 1;
-    num |= Math.random() > 0.5 ? 1 : 0;
-  }
-  return num;
-}
-
-function random(length: number) {
-  const arr = [];
-  for (let i = 0; i < length; i++) {
-    arr.push(randomUint8());
-  }
-  return new Uint8Array(arr);
-}
-
-async function generateSalt() {
-  return new Bson.Binary(
-    await blake3(random(256), String(Date.now())),
-  );
-}
-
 /**
  * generate salted password
  * @param password raw password string
@@ -50,7 +27,8 @@ export async function generateSaltedPassword(
   salt?: Bson.Binary,
 ) {
   if (!salt) {
-    salt = await generateSalt();
+    // generate random salt
+    salt = new Bson.Binary(crypto.getRandomValues(new Uint8Array(256)));
   }
   const saltedPassword = new Bson.Binary(await blake3(password, salt.buffer));
   return { salt, saltedPassword };
