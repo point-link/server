@@ -4,9 +4,15 @@ import output from "../util/output.ts";
 
 output.info(`Connecting to MongoDB...`);
 
-const client = new MongoClient();
+const query = Object.entries({
+  retryWrites: "true",
+  w: "majority",
+  authMechanism: "SCRAM-SHA-1",
+})
+  .map(([k, v]) => `${k}=${v}`)
+  .join("&");
 const uri =
-  `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}?retryWrites=true&w=majority&authMechanism=SCRAM-SHA-1`;
-const db = await client.connect(uri);
+  `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}?${query}`;
+const db = await new MongoClient().connect(uri);
 
 export default db;
