@@ -28,7 +28,9 @@ export async function generateSaltedPassword(
 ) {
   if (!salt) {
     // generate random salt
-    salt = new Bson.Binary(crypto.getRandomValues(new Uint8Array(256)));
+    salt = new Bson.Binary(
+      crypto.getRandomValues(new Uint8Array(32)), // 32 Bytes
+    );
   }
   const saltedPassword = new Bson.Binary(await blake3(password, salt.buffer));
   return { salt, saltedPassword };
