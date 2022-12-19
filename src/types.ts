@@ -20,5 +20,4 @@ export type MaybeAccountSchema = Account & MaybeMongoObject;
 
 export interface JwtPayload extends djwt.Payload {
   username: string;
-  role: string;
 }
