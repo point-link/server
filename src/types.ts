@@ -9,9 +9,14 @@ export interface MaybeMongoObject {
 }
 
 export interface Account {
+  uid: number;
   username: string;
   password: Bson.Binary;
   salt: Bson.Binary;
+  profile: {
+    avatar: string;
+    nickname: string;
+  };
 }
 
 export type AccountSchema = Account & MongoObject;
