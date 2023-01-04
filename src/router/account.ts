@@ -32,4 +32,31 @@ router.post("/", async (ctx) => {
   }
 });
 
+/**
+ * 获取账号资料
+ */
+router.get("/profile/:uid", async (ctx) => {
+  // 获取参数
+  const uid = Number(ctx.params.uid)
+  // 检查参数
+  if (isNaN(uid)) {
+    ctx.response.status = 400
+    return
+  }
+  // 获取账号资料
+  const account = await accountDao.findOne(uid)
+  if (account) {
+    ctx.response.body = account?.profile
+  } else {
+    ctx.response.status = 404
+  }
+})
+
+/**
+ * 获取 token
+ */
+router.get("/token", async () => {
+
+})
+
 export default router;
