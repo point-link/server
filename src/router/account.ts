@@ -1,6 +1,10 @@
-import { oak } from "../deps.ts";
+import { datetime, oak } from "../deps.ts";
 import accountDao from "../db/dao/account.ts";
-import { generateSaltedPassword } from "../util/auth.ts";
+import {
+  correctPassword,
+  generateSaltedPassword,
+  signJwt,
+} from "../util/auth.ts";
 
 const router = new oak.Router();
 
@@ -37,26 +41,59 @@ router.post("/", async (ctx) => {
  */
 router.get("/profile/:uid", async (ctx) => {
   // 获取参数
-  const uid = Number(ctx.params.uid)
+  const uid = Number(ctx.params.uid);
   // 检查参数
   if (isNaN(uid)) {
-    ctx.response.status = 400
-    return
+    ctx.response.status = 400;
+    return;
   }
   // 获取账号资料
-  const account = await accountDao.findOne(uid)
+  const account = await accountDao.findOneByUid(uid);
   if (account) {
-    ctx.response.body = account?.profile
+    ctx.response.body = account?.profile;
   } else {
-    ctx.response.status = 404
+    ctx.response.status = 404;
   }
-})
+});
 
 /**
- * 获取 token
+ * 登录
  */
-router.get("/token", async () => {
-
-})
+router.post("/login", async (ctx) => {
+  // 获取参数
+  const body = ctx.request.body();
+  if (body.type !== "json") {
+    ctx.response.status = 400;
+    return;
+  }
+  const username = (await body.value)?.username;
+  const password = (await body.value)?.password;
+  // 检查参数
+  if (typeof username !== "string" || typeof password !== "string") {
+    ctx.response.status = 400;
+    return;
+  }
+  // 查找账号
+  const account = await accountDao.findOneByUsername(username);
+  if (!account) {
+    ctx.response.status = 404;
+    return;
+  }
+  // 校验密码
+  if (!await correctPassword(password, account.salt, account.password)) {
+    ctx.response.status = 403;
+    return;
+  }
+  // 签发 token
+  const token = await signJwt(
+    datetime.DAY * 3, // 3 day
+    {
+      uid: account.uid,
+      username: account.username,
+    },
+  );
+  // 响应
+  ctx.response.body = { token };
+});
 
 export default router;

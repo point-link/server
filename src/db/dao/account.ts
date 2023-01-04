@@ -9,8 +9,12 @@ class AccountDao {
     this.#collection = collection;
   }
 
-  async findOne(uid: number) {
+  async findOneByUid(uid: number) {
     return await this.#collection.findOne({ uid });
+  }
+
+  async findOneByUsername(username: string) {
+    return await this.#collection.findOne({ username });
   }
 
   /**
