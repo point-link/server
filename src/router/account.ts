@@ -9,15 +9,15 @@ const router = new oak.Router();
  */
 router.post("/", async (ctx) => {
   // 获取参数
-  const body = await ctx.request.body().value;
-  const username = body?.username;
-  const password = body?.password;
-  // 检查参数
-  if (typeof username !== "string") {
+  const body = ctx.request.body();
+  if (body.type !== "json") {
     ctx.response.status = 400;
     return;
   }
-  if (typeof password !== "string") {
+  const username = (await body.value)?.username;
+  const password = (await body.value)?.password;
+  // 检查参数
+  if (typeof username !== "string" || typeof password !== "string") {
     ctx.response.status = 400;
     return;
   }
