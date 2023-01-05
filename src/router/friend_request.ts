@@ -10,7 +10,7 @@ const router = new oak.Router();
  */
 router.post("/", jwt(), async (ctx) => {
   // 获取参数
-  const uid = ctx.state.jwt.payload.uid
+  const uid = ctx.state.jwt.payload.uid;
   const body = ctx.request.body();
   if (body.type !== "json") {
     ctx.response.status = 400;
@@ -36,7 +36,7 @@ router.post("/", jwt(), async (ctx) => {
  */
 router.get("/", jwt(), async (ctx) => {
   // 获取参数
-  const uid = ctx.state.jwt.payload.uid
+  const uid = ctx.state.jwt.payload.uid;
   const _status = ctx.request.url.searchParams.get("status");
   const status = _status ? Number(_status) : undefined;
   const type = ctx.request.url.searchParams.get("type");

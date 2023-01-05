@@ -10,7 +10,7 @@ const router = new oak.Router();
  */
 router.get("/", jwt(), async (ctx) => {
   // 获取参数
-  const uid = ctx.state.jwt.payload.uid
+  const uid = ctx.state.jwt.payload.uid;
   // 查询好友
   const friends = await friendDao.find(uid);
   // 响应
