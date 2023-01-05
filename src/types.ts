@@ -1,14 +1,15 @@
 import { Bson, djwt, ObjectId } from "./deps.ts";
 
+export interface JwtPayload extends djwt.Payload {
+  uid: number;
+  username: string;
+}
+
 export interface MongoObject {
   _id: ObjectId;
 }
 
-export interface MaybeMongoObject {
-  _id?: ObjectId;
-}
-
-export interface Account {
+export interface Account extends MongoObject {
   uid: number;
   username: string;
   password: Bson.Binary;
@@ -17,12 +18,4 @@ export interface Account {
     avatar: string;
     nickname: string;
   };
-}
-
-export type AccountSchema = Account & MongoObject;
-
-export type MaybeAccountSchema = Account & MaybeMongoObject;
-
-export interface JwtPayload extends djwt.Payload {
-  username: string;
 }

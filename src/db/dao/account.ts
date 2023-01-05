@@ -1,13 +1,9 @@
-import type { AccountSchema } from "../../types.ts";
+import type { Account } from "../../types.ts";
 import { Bson, Collection } from "../../deps.ts";
 import db from "../db.ts";
 
 class AccountDao {
-  #collection: Collection<AccountSchema>;
-
-  constructor(collection: Collection<AccountSchema>) {
-    this.#collection = collection;
-  }
+  #collection: Collection<Account> = db.collection("account");
 
   async findOneByUid(uid: number) {
     return await this.#collection.findOne({ uid });
@@ -49,6 +45,4 @@ class AccountDao {
   }
 }
 
-export default new AccountDao(
-  db.collection<AccountSchema>("account"),
-);
+export default new AccountDao();
