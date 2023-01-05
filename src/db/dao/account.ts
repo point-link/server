@@ -19,7 +19,7 @@ class AccountDao {
    * @param password 密码，应为一个加盐后的二进制数据
    * @param salt 密码的盐值
    */
-  async createAccount(
+  async createOne(
     username: string,
     password: Bson.Binary,
     salt: Bson.Binary,

@@ -39,7 +39,7 @@ router.post("/", async (ctx) => {
     return;
   }
   // 创建请求
-  await friendRequestDao.createRequest(payload.uid, targetUid, description);
+  await friendRequestDao.createOne(payload.uid, targetUid, description);
   // 响应
   ctx.response.status = 200;
 });

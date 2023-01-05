@@ -28,7 +28,7 @@ router.post("/", async (ctx) => {
   const { saltedPassword, salt } = await generateSaltedPassword(password);
   // 创建账号并响应
   try {
-    await accountDao.createAccount(username, saltedPassword, salt);
+    await accountDao.createOne(username, saltedPassword, salt);
     ctx.response.status = 200;
   } catch (_) {
     ctx.response.status = 403;

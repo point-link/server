@@ -24,7 +24,7 @@ router.get("/", async (ctx) => {
     return;
   }
   // 查询好友
-  const friends = await friendDao.findFriends(payload.uid);
+  const friends = await friendDao.find(payload.uid);
   // 响应
   ctx.response.body = friends.map(omitMongoId);
 });

@@ -5,7 +5,7 @@ import db from "../db.ts";
 class FriendDao {
   #collection: Collection<Friend> = db.collection("friend");
 
-  async findFriends(uid: number) {
+  async find(uid: number) {
     return await this.#collection.find({ selfUid: uid }).toArray();
   }
 

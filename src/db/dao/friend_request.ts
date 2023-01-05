@@ -15,7 +15,7 @@ class FriendDao {
     return await this.#collection.find(filter).toArray();
   }
 
-  async createRequest(
+  async createOne(
     requesterUid: number,
     targetUid: number,
     description?: string,
