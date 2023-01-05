@@ -5,8 +5,14 @@ import db from "../db.ts";
 class FriendDao {
   #collection: Collection<FriendRequest> = db.collection("friend_request");
 
-  async findPendingRequests(uid: number) {
-    return await this.#collection.find({ selfUid: uid, status: 10 }).toArray();
+  async findByRequester(requesterUid: number, status?: 10 | 20 | 30) {
+    const filter = status ? { requesterUid, status } : { requesterUid };
+    return await this.#collection.find(filter).toArray();
+  }
+
+  async findByTarget(targetUid: number, status?: 10 | 20 | 30) {
+    const filter = status ? { targetUid, status } : { targetUid };
+    return await this.#collection.find(filter).toArray();
   }
 
   async createRequest(
