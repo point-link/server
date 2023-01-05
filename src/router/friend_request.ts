@@ -1,6 +1,5 @@
 import { oak } from "../deps.ts";
-import { verifyJwt } from "../util/auth.ts";
-import { asyncIgnoreError } from "../util/plain.ts";
+import { jwt } from "../middleware/jwt.ts";
 import { omitMongoId } from "../util/type.ts";
 import friendRequestDao from "../db/dao/friend_request.ts";
 
@@ -9,21 +8,9 @@ const router = new oak.Router();
 /**
  * 创建好友请求
  */
-router.post("/", async (ctx) => {
-  // 验证 token
-  const token = ctx.request.headers.get("x-auth-token");
-  if (!token) {
-    ctx.response.status = 401;
-    return;
-  }
-  const payload = await asyncIgnoreError(
-    () => verifyJwt(token),
-  );
-  if (!payload) {
-    ctx.response.status = 403;
-    return;
-  }
+router.post("/", jwt(), async (ctx) => {
   // 获取参数
+  const uid = ctx.state.jwt.payload.uid
   const body = ctx.request.body();
   if (body.type !== "json") {
     ctx.response.status = 400;
@@ -39,7 +26,7 @@ router.post("/", async (ctx) => {
     return;
   }
   // 创建请求
-  await friendRequestDao.createOne(payload.uid, targetUid, description);
+  await friendRequestDao.createOne(uid, targetUid, description);
   // 响应
   ctx.response.status = 200;
 });
@@ -47,21 +34,9 @@ router.post("/", async (ctx) => {
 /**
  * 查询好友请求
  */
-router.get("/", async (ctx) => {
-  // 验证 token
-  const token = ctx.request.headers.get("x-auth-token");
-  if (!token) {
-    ctx.response.status = 401;
-    return;
-  }
-  const payload = await asyncIgnoreError(
-    () => verifyJwt(token),
-  );
-  if (!payload) {
-    ctx.response.status = 403;
-    return;
-  }
+router.get("/", jwt(), async (ctx) => {
   // 获取参数
+  const uid = ctx.state.jwt.payload.uid
   const _status = ctx.request.url.searchParams.get("status");
   const status = _status ? Number(_status) : undefined;
   const type = ctx.request.url.searchParams.get("type");
@@ -77,7 +52,6 @@ router.get("/", async (ctx) => {
     return;
   }
   // 查询好友请求
-  const uid = payload.uid;
   const requests = type === "requester"
     ? await friendRequestDao.findByRequester(uid, status)
     : await friendRequestDao.findByTarget(uid, status);

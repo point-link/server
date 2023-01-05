@@ -15,7 +15,7 @@ export function jwt(
 ): oak.Middleware<JwtState> {
   return async (ctx, next) => {
     // get jwt
-    const token = ctx.request.headers.get("X-Token");
+    const token = ctx.request.headers.get("x-auth-token");
     if (!token) {
       ctx.response.status = 401;
       return;
