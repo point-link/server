@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 
-import type { MaybeMongoObject, MongoObject } from "../types.ts";
+import type { MongoIdOmitted, MongoObject } from "../types.ts";
 import { ObjectId } from "../deps.ts";
 
 export function isString(value: any): value is string {
@@ -9,13 +9,6 @@ export function isString(value: any): value is string {
 
 export function isMongoObject(value: any): value is MongoObject {
   return value?._id instanceof ObjectId;
-}
-
-export function isMaybeMongoObject(value: any): value is MaybeMongoObject {
-  if (typeof value !== "object") {
-    return false;
-  }
-  return value._id === undefined || value._id instanceof ObjectId;
 }
 
 export function isTypedArray<T>(
@@ -35,4 +28,12 @@ export function isTypedArray<T>(
 
 export function isStringArray(value: any): value is string[] {
   return isTypedArray(value, isString);
+}
+
+export function omitMongoId<T extends MongoObject>(
+  mongoObj: T,
+): MongoIdOmitted<T> {
+  const idOmitted = { ...mongoObj };
+  delete (idOmitted as any)._id;
+  return idOmitted;
 }

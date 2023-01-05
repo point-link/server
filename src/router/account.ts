@@ -20,14 +20,13 @@ router.post("/", async (ctx) => {
   }
   const username = (await body.value)?.username;
   const password = (await body.value)?.password;
-  // 检查参数
   if (typeof username !== "string" || typeof password !== "string") {
     ctx.response.status = 400;
     return;
   }
   // 生成加盐密码
   const { saltedPassword, salt } = await generateSaltedPassword(password);
-  // 创建账号
+  // 创建账号并响应
   try {
     await accountDao.createAccount(username, saltedPassword, salt);
     ctx.response.status = 200;
@@ -42,15 +41,15 @@ router.post("/", async (ctx) => {
 router.get("/profile/:uid", async (ctx) => {
   // 获取参数
   const uid = Number(ctx.params.uid);
-  // 检查参数
   if (isNaN(uid)) {
     ctx.response.status = 400;
     return;
   }
   // 获取账号资料
   const account = await accountDao.findOneByUid(uid);
+  // 响应
   if (account) {
-    ctx.response.body = account?.profile;
+    ctx.response.body = account.profile;
   } else {
     ctx.response.status = 404;
   }
@@ -68,7 +67,6 @@ router.post("/login", async (ctx) => {
   }
   const username = (await body.value)?.username;
   const password = (await body.value)?.password;
-  // 检查参数
   if (typeof username !== "string" || typeof password !== "string") {
     ctx.response.status = 400;
     return;
