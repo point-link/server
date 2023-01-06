@@ -4,17 +4,16 @@ import router from "./router/index.ts";
 
 const app = new oak.Application();
 
-// middleware
+// 日志
 app.use(logger());
+// 跨域
 app.use(oakCors({
   origin: [
     "https://miixinn.com",
     /http:\/\/localhost:\d+/,
   ],
 }));
-
-// router
-app.use(router.routes());
-app.use(router.allowedMethods());
+// 路由
+app.use(router.routes(), router.allowedMethods());
 
 export default app;

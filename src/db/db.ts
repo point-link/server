@@ -2,7 +2,7 @@ import { MongoClient } from "../deps.ts";
 import { DB_HOST, DB_NAME, DB_PASSWORD, DB_USERNAME } from "../config.ts";
 import output from "../util/output.ts";
 
-output.info(`Connecting to MongoDB...`);
+output.info(`正在连接数据库`);
 
 const query = Object.entries({
   retryWrites: "true",

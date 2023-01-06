@@ -1,6 +1,5 @@
 import type { JwtPayload } from "../types.ts";
 import { oak } from "../deps.ts";
-import { asyncIgnoreError } from "../util/plain.ts";
 import { verifyJwt } from "../util/auth.ts";
 
 interface JwtState {
@@ -10,30 +9,26 @@ interface JwtState {
   };
 }
 
-export function jwt(
-  payloadValidator?: Partial<JwtPayload>,
-): oak.Middleware<JwtState> {
+export function jwt(): oak.Middleware<JwtState> {
   return async (ctx, next) => {
-    // get jwt
+    // 从请求头中获取 token
     const token = ctx.request.headers.get("x-auth-token");
     if (!token) {
       ctx.response.status = 401;
       return;
     }
-    // verify jwt
-    const payload = await asyncIgnoreError(async () =>
-      await verifyJwt(token, payloadValidator)
-    );
+    // 验证 token
+    const payload = await verifyJwt(token);
     if (!payload) {
       ctx.response.status = 403;
       return;
     }
-    // set ctx.state
+    // 设置 ctx.state
     ctx.state.jwt = {
       token,
       payload,
     };
-    // next middleware
+    // 下一中间件
     await next();
   };
 }
