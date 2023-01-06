@@ -30,9 +30,18 @@ export interface Friend extends MongoObject {
   description?: string;
 }
 
+/**
+ * 好友请求的状态。
+ * 1：等待，
+ * 2：取消，
+ * 3：同意，
+ * 4：拒绝。
+ */
+export type FriendRequestStatus = 1 | 2 | 3 | 4;
+
 export interface FriendRequest extends MongoObject {
   requesterUid: number;
   targetUid: number;
-  status: 10 | 20 | 30; // 10：等待，20：同意，30：拒绝
+  status: FriendRequestStatus;
   description?: string;
 }

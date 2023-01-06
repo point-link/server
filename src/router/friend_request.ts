@@ -2,6 +2,7 @@ import { oak } from "../deps.ts";
 import { jwt } from "../middleware/jwt.ts";
 import { omitMongoId } from "../util/type.ts";
 import friendRequestDao from "../db/dao/friend_request.ts";
+import friendDao from "../db/dao/friend.ts";
 
 const router = new oak.Router();
 
@@ -42,7 +43,7 @@ router.get("/", jwt(), async (ctx) => {
   const type = ctx.request.url.searchParams.get("type");
   if (
     typeof status === "number" &&
-    !(status === 10 || status === 20 || status === 30)
+    !(status === 1 || status === 2 || status === 3 || status === 4)
   ) {
     ctx.response.status = 400;
     return;
@@ -57,6 +58,38 @@ router.get("/", jwt(), async (ctx) => {
     : await friendRequestDao.findByTarget(uid, status);
   // 响应
   ctx.response.body = requests.map(omitMongoId);
+});
+
+/**
+ * 同意或拒绝好友请求
+ */
+router.put("/", jwt(), async (ctx) => {
+  // 获取参数
+  const targetUid = ctx.state.jwt.payload.uid;
+  const action = ctx.request.url.searchParams.get("action");
+  if (action !== "agree" && action !== "reject") {
+    ctx.response.status = 400;
+    return;
+  }
+  const requesterUid = Number(ctx.request.url.searchParams.get("requesterUid"));
+  if (isNaN(requesterUid)) {
+    ctx.response.status = 400;
+    return;
+  }
+  // 改变好友请求的状态
+  const ok = await friendRequestDao.updateStatus(
+    requesterUid,
+    targetUid,
+    action,
+  );
+  if (!ok) {
+    ctx.response.status = 404;
+    return;
+  }
+  // 创建好友关系
+  friendDao.createFriendship(requesterUid, targetUid);
+  // 响应
+  ctx.response.status = 200;
 });
 
 export default router;
