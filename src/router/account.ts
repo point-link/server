@@ -1,4 +1,4 @@
-import { datetime, oak } from "../deps.ts";
+import { oak } from "../deps.ts";
 import accountDao from "../db/dao/account.ts";
 import {
   correctPassword,
@@ -84,7 +84,7 @@ router.post("/login", async (ctx) => {
   }
   // 签发 token
   const token = await signJwt(
-    datetime.DAY * 3, // 3 day
+    3 * 24 * 60 * 60, // 有效时长为 3 天
     {
       uid: account.uid,
       username: account.username,

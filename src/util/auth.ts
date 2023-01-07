@@ -62,7 +62,7 @@ export async function correctPassword(
 
 /**
  * 签发 JWT。
- * @param duration 有效时长（毫秒）, exp = Math.round((Date.now() + duration) / 1000)
+ * @param duration 有效时长（单位：秒）
  * @param payload 负载数据
  * @returns JWT
  */
@@ -70,11 +70,13 @@ export async function signJwt(
   duration: number,
   payload: JwtPayload,
 ) {
+  const now = Math.floor(Date.now() / 1000);
   return await djwt.create(
     { alg: "ES256", typ: "JWT" },
     {
-      exp: Math.round((Date.now() + duration) / 1000),
       ...payload,
+      nbf: now,
+      exp: now + Math.floor(duration),
     },
     JWT_PRIVATE_KEY,
   );
