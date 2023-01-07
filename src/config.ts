@@ -10,28 +10,15 @@ if (!_DB_URI) {
 }
 export const DB_URI = _DB_URI;
 
-// JWT_PRIVATE_KEY
-const _JWT_PRIVATE_KEY = Deno.env.get("JWT_PRIVATE_KEY");
-if (!_JWT_PRIVATE_KEY) {
-  throw new Error("缺少环境变量: JWT_PRIVATE_KEY");
+// JWT_KEY
+const _JWT_KEY = Deno.env.get("JWT_KEY");
+if (!_JWT_KEY) {
+  throw new Error("缺少环境变量: _JWT_KEY");
 }
-export const JWT_PRIVATE_KEY = await crypto.subtle.importKey(
-  "pkcs8",
-  base64.decode(_JWT_PRIVATE_KEY),
-  { name: "ECDSA", namedCurve: "P-256" },
+export const JWT_KEY = await crypto.subtle.importKey(
+  "raw",
+  base64.decode(_JWT_KEY),
+  { name: "HMAC", hash: "SHA-256" }, // HS256
   false,
-  ["sign"],
-);
-
-// JWT_PUBLIC_KEY
-const _JWT_PUBLIC_KEY = Deno.env.get("JWT_PUBLIC_KEY");
-if (!_JWT_PUBLIC_KEY) {
-  throw new Error("缺少环境变量: JWT_PUBLIC_KEY");
-}
-export const JWT_PUBLIC_KEY = await crypto.subtle.importKey(
-  "spki",
-  base64.decode(_JWT_PUBLIC_KEY),
-  { name: "ECDSA", namedCurve: "P-256" },
-  false,
-  ["verify"],
+  ["sign", "verify"],
 );

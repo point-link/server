@@ -1,6 +1,6 @@
 import type { JwtPayload } from "../types.ts";
 import { Bson, djwt } from "../deps.ts";
-import { JWT_PRIVATE_KEY, JWT_PUBLIC_KEY } from "../config.ts";
+import { JWT_KEY } from "../config.ts";
 import { blake3 } from "./plain.ts";
 
 /**
@@ -72,13 +72,13 @@ export async function signJwt(
 ) {
   const now = Math.floor(Date.now() / 1000);
   return await djwt.create(
-    { alg: "ES256", typ: "JWT" },
+    { alg: "HS256", typ: "JWT" },
     {
       ...payload,
       nbf: now,
       exp: now + Math.floor(duration),
     },
-    JWT_PRIVATE_KEY,
+    JWT_KEY,
   );
 }
 
@@ -89,7 +89,7 @@ export async function signJwt(
  */
 export async function verifyJwt(jwt: string) {
   try {
-    return await djwt.verify(jwt, JWT_PUBLIC_KEY) as JwtPayload;
+    return await djwt.verify(jwt, JWT_KEY) as JwtPayload;
   } catch (_) {
     return;
   }
