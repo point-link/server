@@ -13,7 +13,7 @@ export const DB_URI = _DB_URI;
 // JWT_KEY
 const _JWT_KEY = Deno.env.get("JWT_KEY");
 if (!_JWT_KEY) {
-  throw new Error("缺少环境变量: _JWT_KEY");
+  throw new Error("缺少环境变量: JWT_KEY");
 }
 export const JWT_KEY = await crypto.subtle.importKey(
   "raw",
