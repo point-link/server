@@ -91,7 +91,13 @@ router.post("/login", async (ctx) => {
     },
   );
   // 响应
-  ctx.response.body = { token };
+  ctx.response.body = {
+    token,
+    account: {
+      uid: account.uid,
+      profile: account.profile,
+    },
+  };
 });
 
 export default router;
