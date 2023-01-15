@@ -1,3 +1,3 @@
-# MiiXinn Backend
+# MiiXinn Server
 
-This is the backend of MiiXinn.
+This is the server of MiiXinn.
