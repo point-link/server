@@ -37,10 +37,7 @@ class AccountDao {
       username,
       password,
       salt,
-      profile: {
-        avatar: "https://i0.hdslb.com/bfs/face/member/noface.jpg",
-        nickname: username,
-      },
+      profile: {},
     });
   }
 }

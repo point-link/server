@@ -17,8 +17,8 @@ export interface Account extends MongoObject {
   password: Bson.Binary;
   salt: Bson.Binary;
   profile: {
-    avatar: string;
-    nickname: string;
+    avatar?: string;
+    nickname?: string;
   };
 }
 
