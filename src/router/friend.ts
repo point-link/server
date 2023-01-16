@@ -1,7 +1,6 @@
 import type { Account } from "../types.ts";
 import { oak } from "../deps.ts";
 import { jwt } from "../middleware/jwt.ts";
-import { omitMongoId } from "../util/type.ts";
 import { findFriends } from "../dao/friend.ts";
 import { findAccountsByUidArr } from "../dao/account.ts";
 
