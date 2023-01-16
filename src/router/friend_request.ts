@@ -1,8 +1,13 @@
 import { oak } from "../deps.ts";
 import { jwt } from "../middleware/jwt.ts";
 import { omitMongoId } from "../util/type.ts";
-import friendRequestDao from "../dao/friend_request.ts";
-import friendDao from "../dao/friend.ts";
+import {
+  createFriendRequest,
+  findFriendRequestsByRequester,
+  findFriendRequestsByTarget,
+  updateFriendRequestStatus,
+} from "../dao/friend_request.ts";
+import { createFriendship } from "../dao/friend.ts";
 
 const router = new oak.Router();
 
@@ -27,7 +32,7 @@ router.post("/", jwt(), async (ctx) => {
     return;
   }
   // 创建请求
-  await friendRequestDao.createOne(uid, targetUid, description);
+  await createFriendRequest(uid, targetUid, description);
   // 响应
   ctx.response.status = 200;
 });
@@ -54,8 +59,8 @@ router.get("/", jwt(), async (ctx) => {
   }
   // 查询好友请求
   const requests = type === "requester"
-    ? await friendRequestDao.findByRequester(uid, status)
-    : await friendRequestDao.findByTarget(uid, status);
+    ? await findFriendRequestsByRequester(uid, status)
+    : await findFriendRequestsByTarget(uid, status);
   // 响应
   ctx.response.body = requests.map(omitMongoId);
 });
@@ -77,7 +82,7 @@ router.put("/", jwt(), async (ctx) => {
     return;
   }
   // 改变好友请求的状态
-  const ok = await friendRequestDao.updateStatus(
+  const ok = await updateFriendRequestStatus(
     requesterUid,
     targetUid,
     action,
@@ -87,7 +92,7 @@ router.put("/", jwt(), async (ctx) => {
     return;
   }
   // 创建好友关系
-  friendDao.createFriendship(requesterUid, targetUid);
+  createFriendship(requesterUid, targetUid);
   // 响应
   ctx.response.status = 200;
 });

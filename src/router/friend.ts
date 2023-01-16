@@ -1,7 +1,7 @@
 import { oak } from "../deps.ts";
 import { jwt } from "../middleware/jwt.ts";
 import { omitMongoId } from "../util/type.ts";
-import friendDao from "../dao/friend.ts";
+import { findFriends } from "../dao/friend.ts";
 
 const router = new oak.Router();
 
@@ -12,7 +12,7 @@ router.get("/", jwt(), async (ctx) => {
   // 获取参数
   const uid = ctx.state.jwt.payload.uid;
   // 查询好友
-  const friends = await friendDao.find(uid);
+  const friends = await findFriends(uid);
   // 响应
   ctx.response.body = friends.map(omitMongoId);
 });

@@ -1,5 +1,9 @@
 import { oak } from "../deps.ts";
-import accountDao from "../dao/account.ts";
+import {
+  createAccount,
+  findAccountByUid,
+  findAccountByUsername,
+} from "../dao/account.ts";
 import {
   correctPassword,
   generateSaltedPassword,
@@ -28,7 +32,7 @@ router.post("/", async (ctx) => {
   const { saltedPassword, salt } = await generateSaltedPassword(password);
   // 创建账号并响应
   try {
-    await accountDao.createOne(username, saltedPassword, salt);
+    await createAccount(username, saltedPassword, salt);
     ctx.response.status = 200;
   } catch (_) {
     ctx.response.status = 403;
@@ -46,7 +50,7 @@ router.get("/", async (ctx) => {
     return;
   }
   // 获取账号资料
-  const account = await accountDao.findOneByUid(uid);
+  const account = await findAccountByUid(uid);
   // 响应
   if (account) {
     ctx.response.body = {
@@ -75,7 +79,7 @@ router.post("/login", async (ctx) => {
     return;
   }
   // 查找账号
-  const account = await accountDao.findOneByUsername(username);
+  const account = await findAccountByUsername(username);
   if (!account) {
     ctx.response.status = 404;
     return;
