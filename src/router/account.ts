@@ -1,5 +1,5 @@
 import { oak } from "../deps.ts";
-import accountDao from "../db/dao/account.ts";
+import accountDao from "../dao/account.ts";
 import {
   correctPassword,
   generateSaltedPassword,

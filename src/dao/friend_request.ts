@@ -1,6 +1,6 @@
-import type { FriendRequest, FriendRequestStatus } from "../../types.ts";
-import { Collection } from "../../deps.ts";
-import db from "../db.ts";
+import type { FriendRequest, FriendRequestStatus } from "../types.ts";
+import { Collection } from "../deps.ts";
+import db from "./_db.ts";
 
 class FriendDao {
   #collection: Collection<FriendRequest> = db.collection("friend_request");

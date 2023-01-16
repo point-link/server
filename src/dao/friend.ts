@@ -1,6 +1,6 @@
-import type { Friend } from "../../types.ts";
-import { Collection } from "../../deps.ts";
-import db from "../db.ts";
+import type { Friend } from "../types.ts";
+import { Collection } from "../deps.ts";
+import db from "./_db.ts";
 
 class FriendDao {
   #collection: Collection<Friend> = db.collection("friend");

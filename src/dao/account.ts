@@ -1,6 +1,6 @@
-import type { Account } from "../../types.ts";
-import { Bson, Collection } from "../../deps.ts";
-import db from "../db.ts";
+import type { Account } from "../types.ts";
+import { Bson, Collection } from "../deps.ts";
+import db from "./_db.ts";
 
 class AccountDao {
   #collection: Collection<Account> = db.collection("account");

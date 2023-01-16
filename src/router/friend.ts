@@ -1,7 +1,7 @@
 import { oak } from "../deps.ts";
 import { jwt } from "../middleware/jwt.ts";
 import { omitMongoId } from "../util/type.ts";
-import friendDao from "../db/dao/friend.ts";
+import friendDao from "../dao/friend.ts";
 
 const router = new oak.Router();
 
