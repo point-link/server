@@ -13,7 +13,7 @@ export async function findFriends(uid: number) {
 }
 
 /**
- * 创建两个账户间的好友关系。
+ * 创建两个账号间的好友关系。
  * @param uid1 账号1
  * @param uid2 账号2
  */

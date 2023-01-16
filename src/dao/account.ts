@@ -23,6 +23,15 @@ export async function findAccountByUsername(username: string) {
 }
 
 /**
+ * 查询一个 UID 数组对应的账号。
+ * @param uidArr UID 数组
+ * @returns 账号数组
+ */
+export async function findAccountsByUidArr(uidArr: number[]) {
+  return await collection.find({ uid: { $in: uidArr } }).toArray();
+}
+
+/**
  * 创建新账号。
  * @param username 用户名
  * @param password 密码，应为一个加盐后的二进制数据
