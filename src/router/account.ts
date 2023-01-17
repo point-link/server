@@ -13,9 +13,9 @@ import {
 const router = new oak.Router();
 
 /**
- * 创建账号
+ * 注册账号
  */
-router.post("/", async (ctx) => {
+router.post("/signup", async (ctx) => {
   // 获取参数
   const body = ctx.request.body();
   if (body.type !== "json") {
@@ -40,31 +40,7 @@ router.post("/", async (ctx) => {
 });
 
 /**
- * 获取账号资料
- */
-router.get("/", async (ctx) => {
-  // 获取参数
-  const uid = Number(ctx.request.url.searchParams.get("uid"));
-  if (isNaN(uid)) {
-    ctx.response.status = 400;
-    return;
-  }
-  // 获取账号资料
-  const account = await findAccountByUid(uid);
-  // 响应
-  if (account) {
-    ctx.response.body = {
-      uid: account.uid,
-      username: account.username,
-      profile: account.profile,
-    };
-  } else {
-    ctx.response.status = 404;
-  }
-});
-
-/**
- * 登录
+ * 登录账号
  */
 router.post("/login", async (ctx) => {
   // 获取参数
@@ -107,6 +83,30 @@ router.post("/login", async (ctx) => {
       profile: account.profile,
     },
   };
+});
+
+/**
+ * 获取账号资料
+ */
+router.get("/", async (ctx) => {
+  // 获取参数
+  const uid = Number(ctx.request.url.searchParams.get("uid"));
+  if (isNaN(uid)) {
+    ctx.response.status = 400;
+    return;
+  }
+  // 获取账号资料
+  const account = await findAccountByUid(uid);
+  // 响应
+  if (account) {
+    ctx.response.body = {
+      uid: account.uid,
+      username: account.username,
+      profile: account.profile,
+    };
+  } else {
+    ctx.response.status = 404;
+  }
 });
 
 export default router;
