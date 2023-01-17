@@ -60,11 +60,11 @@ export async function createFriendRequest(
 export async function updateFriendRequestStatus(
   requesterUid: number,
   targetUid: number,
-  action: "agree" | "reject",
+  action: "cancel" | "agree" | "reject",
 ) {
   const { modifiedCount } = await collection.updateOne(
     { requesterUid, targetUid, status: 1 },
-    { $set: { status: action === "agree" ? 3 : 4 } },
+    { $set: { status: action === "cancel" ? 2 : action === "agree" ? 3 : 4 } },
   );
   return modifiedCount === 1;
 }
