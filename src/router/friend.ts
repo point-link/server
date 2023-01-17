@@ -21,13 +21,21 @@ router.get("/", jwt(), async (ctx) => {
   for (const account of friendAccounts) {
     map.set(account.uid, account);
   }
-  const data = friends.map((f) => ({
-    uid: f.friendUid,
-    tags: f.tags,
-    remark: f.remark,
-    description: f.description,
-    profile: map.get(f.friendUid)?.profile,
-  }));
+  const data = [];
+  for (const friend of friends) {
+    const friendAccount = map.get(friend.friendUid);
+    if (!friendAccount) {
+      continue;
+    }
+    data.push({
+      uid: friend.friendUid,
+      tags: friend.tags,
+      remark: friend.remark,
+      description: friend.description,
+      username: friendAccount.username,
+      profile: friendAccount.profile,
+    });
+  }
   // 响应
   ctx.response.body = data;
 });

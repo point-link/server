@@ -55,6 +55,7 @@ router.get("/", async (ctx) => {
   if (account) {
     ctx.response.body = {
       uid: account.uid,
+      username: account.username,
       profile: account.profile,
     };
   } else {
@@ -102,6 +103,7 @@ router.post("/login", async (ctx) => {
     token,
     account: {
       uid: account.uid,
+      username: account.username,
       profile: account.profile,
     },
   };
