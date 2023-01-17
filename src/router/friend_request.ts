@@ -1,6 +1,7 @@
+import type { Account } from "../types.ts";
 import { oak } from "../deps.ts";
 import { jwt } from "../middleware/jwt.ts";
-import { omitMongoId } from "../util/type.ts";
+import { findAccountsByUidArr } from "../dao/account.ts";
 import {
   createFriendRequest,
   findFriendRequestsByRequester,
@@ -61,8 +62,41 @@ router.get("/", jwt(), async (ctx) => {
   const requests = type === "requester"
     ? await findFriendRequestsByRequester(uid, status)
     : await findFriendRequestsByTarget(uid, status);
+  // 构建响应数据
+  const uidArr: number[] = [];
+  for (const request of requests) {
+    uidArr.push(request.requesterUid);
+    uidArr.push(request.targetUid);
+  }
+  const accounts = await findAccountsByUidArr(uidArr);
+  const map = new Map<number, Account>();
+  for (const account of accounts) {
+    map.set(account.uid, account);
+  }
+  const data = [];
+  for (const request of requests) {
+    const requester = map.get(request.requesterUid);
+    const target = map.get(request.targetUid);
+    if (!(requester && target)) {
+      continue;
+    }
+    data.push({
+      requester: {
+        uid: requester.uid,
+        username: requester.username,
+        profile: requester.profile,
+      },
+      target: {
+        uid: target.uid,
+        username: target.username,
+        profile: target.profile,
+      },
+      status: request.status,
+      description: request.description,
+    });
+  }
   // 响应
-  ctx.response.body = requests.map(omitMongoId);
+  ctx.response.body = data;
 });
 
 /**
