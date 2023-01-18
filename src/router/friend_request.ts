@@ -143,7 +143,7 @@ router.put("/", jwt(), async (ctx) => {
   }
   // 创建好友关系
   if (action === "agree") {
-    createFriendship(requesterUid, targetUid);
+    await createFriendship(requesterUid, targetUid);
   }
   // 响应
   ctx.response.status = 200;
