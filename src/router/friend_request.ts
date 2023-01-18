@@ -132,17 +132,19 @@ router.put("/", jwt(), async (ctx) => {
   const requesterUid = role === "requester" ? selfUid : associatedUid;
   const targetUid = role === "target" ? selfUid : associatedUid;
   // 改变好友请求的状态
-  const ok = await updateFriendRequestStatus(
+  const updated = await updateFriendRequestStatus(
     requesterUid,
     targetUid,
     action,
   );
-  if (!ok) {
+  if (!updated) {
     ctx.response.status = 404;
     return;
   }
   // 创建好友关系
-  createFriendship(requesterUid, targetUid);
+  if (action === "agree") {
+    createFriendship(requesterUid, targetUid);
+  }
   // 响应
   ctx.response.status = 200;
 });
