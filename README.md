@@ -1,3 +1,3 @@
-# MiiXinn Server
+# PointLink Server
 
-This is the server of MiiXinn.
+This is the server of PointLink.

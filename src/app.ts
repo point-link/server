@@ -9,8 +9,7 @@ app.use(logger());
 // 跨域
 app.use(oakCors({
   origin: [
-    "https://miixinn.com",
-    /http:\/\/localhost:\d+/,
+    "https://api.pointlink.top",
   ],
 }));
 // 路由
