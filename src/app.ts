@@ -9,7 +9,7 @@ app.use(logger());
 // 跨域
 app.use(oakCors({
   origin: [
-    "https://api.pointlink.top",
+    "http://localhost:8080",
   ],
 }));
 // 路由
