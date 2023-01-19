@@ -104,11 +104,12 @@ router.get("/", jwt(), async (ctx) => {
  */
 router.put("/status", jwt(), async (ctx) => {
   // 获取参数
-  const body = await ctx.request.body().value;
-  if (body.type !== "json") {
+  const bodyType = ctx.request.body().type;
+  if (bodyType !== "json") {
     ctx.response.status = 400;
     return;
   }
+  const body = await ctx.request.body().value;
   const role = body?.role;
   if (role !== "requester" && role !== "target") {
     ctx.response.status = 400;
