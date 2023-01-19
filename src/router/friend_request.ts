@@ -102,14 +102,19 @@ router.get("/", jwt(), async (ctx) => {
 /**
  * 取消、同意或拒绝好友请求
  */
-router.put("/", jwt(), async (ctx) => {
+router.put("/status", jwt(), async (ctx) => {
   // 获取参数
-  const role = ctx.request.url.searchParams.get("role");
+  const body = await ctx.request.body().value;
+  if (body.type !== "json") {
+    ctx.response.status = 400;
+    return;
+  }
+  const role = body?.role;
   if (role !== "requester" && role !== "target") {
     ctx.response.status = 400;
     return;
   }
-  const action = ctx.request.url.searchParams.get("action");
+  const action = body?.action;
   if (action !== "cancel" && action !== "agree" && action !== "reject") {
     ctx.response.status = 400;
     return;
@@ -121,17 +126,15 @@ router.put("/", jwt(), async (ctx) => {
     ctx.response.status = 400;
     return;
   }
-  const associatedUid = Number(
-    ctx.request.url.searchParams.get("associatedUid"),
-  );
-  if (isNaN(associatedUid)) {
+  const associatedUid = body?.associatedUid;
+  if (typeof associatedUid !== "number") {
     ctx.response.status = 400;
     return;
   }
   const selfUid = ctx.state.jwt.payload.uid;
+  // 改变好友请求的状态
   const requesterUid = role === "requester" ? selfUid : associatedUid;
   const targetUid = role === "target" ? selfUid : associatedUid;
-  // 改变好友请求的状态
   const updated = await updateFriendRequestStatus(
     requesterUid,
     targetUid,
