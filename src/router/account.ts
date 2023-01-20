@@ -1,8 +1,11 @@
+import type { Account } from "../types.ts";
 import { oak } from "../deps.ts";
+import { jwt } from "../middleware/jwt.ts";
 import {
   createAccount,
   findAccountByUid,
   findAccountByUsername,
+  updateAccountProfile,
 } from "../dao/account.ts";
 import {
   correctPassword,
@@ -107,6 +110,29 @@ router.get("/", async (ctx) => {
   } else {
     ctx.response.status = 404;
   }
+});
+
+/**
+ * 更新账号的个人资料
+ */
+router.put("/profile", jwt(), async (ctx) => {
+  // 获取参数
+  const bodyType = ctx.request.body().type;
+  if (bodyType !== "json") {
+    ctx.response.status = 400;
+    return;
+  }
+  const body = await ctx.request.body().value;
+  const uid = ctx.state.jwt.payload.uid;
+  // 更新
+  const profile = body as Account["profile"]; // TODO: 完善数据校验
+  const updated = await updateAccountProfile(uid, profile);
+  if (!updated) {
+    ctx.response.status = 500;
+    return;
+  }
+  // 响应
+  ctx.response.status = 200;
 });
 
 export default router;

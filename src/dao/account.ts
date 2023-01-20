@@ -58,3 +58,20 @@ export async function createAccount(
     profile: {},
   });
 }
+
+/**
+ * 更新账号的个人资料。
+ * @param uid 账号的 UID
+ * @param profile 账号的个人资料
+ * @returns 是否更新成功
+ */
+export async function updateAccountProfile(
+  uid: number,
+  profile: Account["profile"],
+) {
+  const { modifiedCount } = await collection.updateOne(
+    { uid },
+    { $set: { profile } },
+  );
+  return modifiedCount === 1;
+}
