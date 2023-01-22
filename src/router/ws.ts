@@ -6,6 +6,7 @@ import {
   updateClientStatus,
 } from "../dao/client.ts";
 import { jwt } from "../middleware/jwt.ts";
+import { syncIgnoreError } from "../util/plain.ts";
 
 const router = new oak.Router();
 
@@ -28,7 +29,12 @@ router.get("/", jwt(), (ctx) => {
     wsMap.set(uid, ws);
   };
   ws.onmessage = async (event) => {
-    const data = event.data as WsData;
+    const data = syncIgnoreError(
+      () => JSON.parse(event.data) as WsData,
+    );
+    if (!data) {
+      return;
+    }
     switch (data.type) {
       case "heartbeat":
         await updateClientRecentHeartbeat(uid, Date.now());
