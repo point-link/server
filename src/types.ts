@@ -30,6 +30,14 @@ export interface Friend extends MongoObject {
   description?: string;
 }
 
+export interface Client extends MongoObject {
+  uid: number;
+  status: "online" | "offline";
+  recentHeartbeat: number;
+  ipv4?: string;
+  ipv6?: string;
+}
+
 /**
  * 好友请求的状态。
  * 1：等待，
@@ -45,3 +53,20 @@ export interface FriendRequest extends MongoObject {
   status: FriendRequestStatus;
   description?: string;
 }
+
+export interface HeartbeatWsData {
+  type: "heartbeat";
+}
+
+export interface ActionWsData {
+  type: "action";
+  action: "login" | "logout";
+}
+
+export interface NetworkWsData {
+  type: "network";
+  ipv4?: string;
+  ipv6?: string;
+}
+
+export type WsData = HeartbeatWsData | ActionWsData | NetworkWsData;

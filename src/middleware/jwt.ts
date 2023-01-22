@@ -11,8 +11,9 @@ interface JwtState {
 
 export function jwt(): oak.Middleware<JwtState> {
   return async (ctx, next) => {
-    // 从请求头中获取 token
-    const token = ctx.request.headers.get("x-auth-token");
+    // 从请求头或 query 中获取 token
+    const token = ctx.request.headers.get("x-auth-token") ||
+      ctx.request.url.searchParams.get("auth_token");
     if (!token) {
       ctx.response.status = 401;
       return;

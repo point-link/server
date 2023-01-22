@@ -1,6 +1,7 @@
 import type { Account } from "../types.ts";
 import { Bson } from "../deps.ts";
 import db from "./_db.ts";
+import { createClient } from "./client.ts";
 
 const collection = db.collection<Account>("account");
 
@@ -49,14 +50,17 @@ export async function createAccount(
       sort: { uid: -1 },
     });
   const nextUid = (latestAccount?.uid || 9999) + 1;
-  // 创建并插入新账号
-  await collection.insertOne({
-    uid: nextUid,
-    username,
-    password,
-    salt,
-    profile: {},
-  });
+  // 创建新账号和对应的 Client
+  await Promise.allSettled([
+    collection.insertOne({
+      uid: nextUid,
+      username,
+      password,
+      salt,
+      profile: {},
+    }),
+    createClient(nextUid),
+  ]);
 }
 
 /**
