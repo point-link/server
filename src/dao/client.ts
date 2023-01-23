@@ -8,6 +8,9 @@ export async function createClient(uid: number) {
     uid,
     status: "offline",
     recentHeartbeat: 0,
+    ipv4: null,
+    ipv6: null,
+    port: null,
   });
 }
 
@@ -37,11 +40,12 @@ export async function updateClientRecentHeartbeat(
 
 export async function updateClientNetwork(
   uid: number,
-  ipv4?: string,
-  ipv6?: string,
+  ipv4: string | null,
+  ipv6: string | null,
+  port: number | null,
 ) {
   return await collection.updateOne(
     { uid },
-    { $set: { ipv4, ipv6 } },
+    { $set: { ipv4, ipv6, port } },
   );
 }

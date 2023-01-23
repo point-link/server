@@ -34,8 +34,9 @@ export interface Client extends MongoObject {
   uid: number;
   status: "online" | "offline";
   recentHeartbeat: number;
-  ipv4?: string;
-  ipv6?: string;
+  ipv4: string | null;
+  ipv6: string | null;
+  port: number | null;
 }
 
 /**
@@ -65,8 +66,9 @@ export interface ActionWsData {
 
 export interface NetworkWsData {
   type: "network";
-  ipv4?: string;
-  ipv6?: string;
+  ipv4: string | null;
+  ipv6: string | null;
+  port: number | null;
 }
 
 export type WsData = HeartbeatWsData | ActionWsData | NetworkWsData;

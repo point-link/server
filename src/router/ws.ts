@@ -40,7 +40,7 @@ router.get("/", jwt(), (ctx) => {
         await updateClientRecentHeartbeat(uid, Date.now());
         break;
       case "network":
-        await updateClientNetwork(uid, data.ipv4, data.ipv6);
+        await updateClientNetwork(uid, data.ipv4, data.ipv6, data.port);
         break;
       case "action":
         await updateClientStatus(
