@@ -49,3 +49,13 @@ export async function updateClientNetwork(
     { $set: { ipv4, ipv6, port } },
   );
 }
+
+export async function findOnlineClients(uidArr: number[]) {
+  return await collection.find(
+    {
+      uid: { $in: uidArr },
+      status: "online",
+      recentHeartbeat: { $gte: Date.now() - 20 * 1000 }, // 20s 掉线检测
+    },
+  ).toArray();
+}
