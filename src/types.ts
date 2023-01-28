@@ -59,9 +59,15 @@ export interface HeartbeatWsData {
   type: "heartbeat";
 }
 
-export interface ActionWsData {
-  type: "action";
-  action: "login" | "logout";
+export interface LoginWsData {
+  type: "login";
+  ipv4: string | null;
+  ipv6: string | null;
+  port: number | null;
+}
+
+export interface LogoutWsData {
+  type: "logout";
 }
 
 export interface NetworkWsData {
@@ -71,4 +77,8 @@ export interface NetworkWsData {
   port: number | null;
 }
 
-export type WsData = HeartbeatWsData | ActionWsData | NetworkWsData;
+export type WsInData =
+  | HeartbeatWsData
+  | LoginWsData
+  | LogoutWsData
+  | NetworkWsData;

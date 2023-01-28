@@ -1,4 +1,4 @@
-import type { WsData } from "../types.ts";
+import type { LoginWsData, WsInData } from "../types.ts";
 import { oak } from "../deps.ts";
 import {
   findOnlineClients,
@@ -13,9 +13,13 @@ import { syncIgnoreError } from "../util/plain.ts";
 const router = new oak.Router();
 const wsMap = new Map<number, WebSocket>(); // uid => ws
 
-async function loginHandler(uid: number) {
+async function loginHandler(uid: number, data: LoginWsData) {
   // 更新数据库
-  await updateClientStatus(uid, "online");
+  await Promise.all([
+    updateClientNetwork(uid, data.ipv4, data.ipv6, data.port),
+    updateClientRecentHeartbeat(uid, Date.now()),
+    updateClientStatus(uid, "online"),
+  ]);
   // 查询在线好友
   const friends = await findFriends(uid);
   const friendUidArr = friends.map((f) => f.friendUid);
@@ -29,6 +33,9 @@ async function loginHandler(uid: number) {
     friendWs.send(JSON.stringify({
       type: "friend-login",
       uid,
+      ipv4: data.ipv4,
+      ipv6: data.ipv6,
+      port: data.port,
     }));
   }
 }
@@ -53,7 +60,7 @@ async function logoutHandler(uid: number) {
   }
 }
 
-async function onmessage(uid: number, data: WsData) {
+async function onmessage(uid: number, data: WsInData) {
   switch (data.type) {
     case "heartbeat":
       await updateClientRecentHeartbeat(uid, Date.now());
@@ -61,13 +68,11 @@ async function onmessage(uid: number, data: WsData) {
     case "network":
       await updateClientNetwork(uid, data.ipv4, data.ipv6, data.port);
       break;
-    case "action":
-      if (data.action === "login") {
-        await loginHandler(uid);
-      }
-      if (data.action === "logout") {
-        await logoutHandler(uid);
-      }
+    case "login":
+      await loginHandler(uid, data);
+      break;
+    case "logout":
+      await logoutHandler(uid);
       break;
   }
 }
@@ -89,7 +94,7 @@ router.get("/", jwt(), (ctx) => {
   ws.onclose = () => wsMap.delete(uid);
   ws.onerror = (event) => console.log(event);
   ws.onmessage = async (event) => {
-    const data = syncIgnoreError(() => JSON.parse(event.data) as WsData);
+    const data = syncIgnoreError(() => JSON.parse(event.data) as WsInData);
     if (data) {
       await onmessage(uid, data);
     }
