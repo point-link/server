@@ -44,7 +44,7 @@ router.get("/", jwt(), async (ctx) => {
 /**
  * 获取在线好友的客户端信息
  */
-router.get("/online-client", jwt(), async (ctx) => {
+router.get("/online_client", jwt(), async (ctx) => {
   // 获取参数
   const uid = ctx.state.jwt.payload.uid;
   // 查询在线好友的客户端信息
