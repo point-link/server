@@ -3,6 +3,7 @@ import { oak } from "../deps.ts";
 import { jwt } from "../middleware/jwt.ts";
 import { findFriends } from "../dao/friend.ts";
 import { findAccountsByUidArr } from "../dao/account.ts";
+import { findOnlineClients } from "../dao/client.ts";
 
 const router = new oak.Router();
 
@@ -36,6 +37,27 @@ router.get("/", jwt(), async (ctx) => {
       profile: friendAccount.profile,
     });
   }
+  // 响应
+  ctx.response.body = data;
+});
+
+/**
+ * 获取在线好友的客户端信息
+ */
+router.get("/online-client", jwt(), async (ctx) => {
+  // 获取参数
+  const uid = ctx.state.jwt.payload.uid;
+  // 查询在线好友的客户端信息
+  const friends = await findFriends(uid);
+  const friendUidArr = friends.map((f) => f.friendUid);
+  const onlineFriendClients = await findOnlineClients(friendUidArr);
+  // 构建响应数据
+  const data = onlineFriendClients.map((c) => ({
+    uid: c.uid,
+    ipv4: c.ipv4,
+    ipv6: c.ipv6,
+    port: c.port,
+  }));
   // 响应
   ctx.response.body = data;
 });
