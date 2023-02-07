@@ -1,7 +1,7 @@
 import type { Account } from "../types.ts";
 import { oak } from "../deps.ts";
 import { jwt } from "../middleware/jwt.ts";
-import { findFriends } from "../dao/friend.ts";
+import { findFriends, updateFriendInfo } from "../dao/friend.ts";
 import { findAccountsByUidArr } from "../dao/account.ts";
 import { findOnlineClients } from "../dao/client.ts";
 
@@ -60,6 +60,30 @@ router.get("/online_client", jwt(), async (ctx) => {
   }));
   // 响应
   ctx.response.body = data;
+});
+
+/**
+ * 更新好友信息
+ */
+router.put("/info", jwt(), async (ctx) => {
+  // 获取参数
+  const uid = ctx.state.jwt.payload.uid;
+  const body = ctx.request.body();
+  if (body.type !== "json") {
+    ctx.response.status = 400;
+    return;
+  }
+  const friendUid = (await body.value)?.friendUid;
+  const remark = (await body.value)?.remark;
+  const tags = (await body.value)?.tags;
+  // 更新好友信息
+  const updated = await updateFriendInfo(uid, friendUid!, remark!, tags!); // TODO: 完善数据校验
+  if (!updated) {
+    ctx.response.status = 400;
+    return;
+  }
+  // 响应
+  ctx.response.status = 200;
 });
 
 export default router;

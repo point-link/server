@@ -13,6 +13,27 @@ export async function findFriends(uid: number) {
 }
 
 /**
+ * 更新好友信息。
+ * @param uid 自己的 UID
+ * @param friendUid 好友的 UID
+ * @param remark 备注
+ * @param tags 标签
+ * @returns 是否成功更新
+ */
+export async function updateFriendInfo(
+  uid: number,
+  friendUid: number,
+  remark: string | undefined,
+  tags: string[],
+) {
+  const { modifiedCount } = await collection.updateOne(
+    { selfUid: uid, friendUid },
+    { $set: { remark, tags } },
+  );
+  return modifiedCount === 1;
+}
+
+/**
  * 创建两个账号间的好友关系。
  * @param uid1 账号1
  * @param uid2 账号2
