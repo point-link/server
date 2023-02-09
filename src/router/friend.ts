@@ -1,7 +1,11 @@
 import type { Account } from "../types.ts";
 import { oak } from "../deps.ts";
 import { jwt } from "../middleware/jwt.ts";
-import { findFriends, updateFriendInfo } from "../dao/friend.ts";
+import {
+  deleteFriendship,
+  findFriends,
+  updateFriendInfo,
+} from "../dao/friend.ts";
 import { findAccountsByUidArr } from "../dao/account.ts";
 import { findOnlineClients } from "../dao/client.ts";
 
@@ -82,6 +86,23 @@ router.put("/info", jwt(), async (ctx) => {
     ctx.response.status = 400;
     return;
   }
+  // 响应
+  ctx.response.status = 200;
+});
+
+/**
+ * 删除好友
+ */
+router.delete("/", jwt(), async (ctx) => {
+  // 获取参数
+  const uid = ctx.state.jwt.payload.uid;
+  const friendUid = Number(ctx.request.url.searchParams.get("friendUid"));
+  if (isNaN(friendUid)) {
+    ctx.response.status = 400;
+    return;
+  }
+  // 删除好友关系
+  await deleteFriendship(uid, friendUid);
   // 响应
   ctx.response.status = 200;
 });

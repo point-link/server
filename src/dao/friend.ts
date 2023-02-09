@@ -44,3 +44,19 @@ export async function createFriendship(uid1: number, uid2: number) {
     { selfUid: uid2, friendUid: uid1, tags: [] },
   ]);
 }
+
+/**
+ * 删除两个账户间的好友关系
+ * @param uid1 账号1
+ * @param uid2 账号2
+ * @returns 是否成功删除
+ */
+export async function deleteFriendship(uid1: number, uid2: number) {
+  const num = await collection.deleteMany({
+    $or: [
+      { selfUid: uid1, friendUid: uid2 },
+      { selfUid: uid2, friendUid: uid1 },
+    ],
+  });
+  return num === 2;
+}
