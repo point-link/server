@@ -99,8 +99,7 @@ router.get("/", jwt(), (ctx) => {
       await onmessage(uid, data);
     }
   };
-  // 响应
-  ctx.response.status = 200;
+  // 升级为 WebSocket 后响应状态自动设为 101，此处无需再设置
 });
 
 export default router;
