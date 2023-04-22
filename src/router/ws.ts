@@ -11,7 +11,7 @@ import { jwt } from "../middleware/jwt.ts";
 import { syncIgnoreError } from "../util/plain.ts";
 
 const router = new oak.Router();
-const wsMap = new Map<number, WebSocket>(); // uid => ws
+export const wsMap = new Map<number, WebSocket>(); // uid => ws
 
 async function loginHandler(uid: number, data: LoginWsData) {
   // 更新数据库

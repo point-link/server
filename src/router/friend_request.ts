@@ -9,6 +9,7 @@ import {
   updateFriendRequestStatus,
 } from "../dao/friend_request.ts";
 import { createFriendship } from "../dao/friend.ts";
+import { wsMap } from "./ws.ts";
 
 const router = new oak.Router();
 
@@ -34,6 +35,10 @@ router.post("/", jwt(), async (ctx) => {
   }
   // 创建请求
   await createFriendRequest(uid, targetUid, description);
+  // 通知客户端
+  wsMap.get(targetUid)?.send(JSON.stringify({
+    type: "friend-update",
+  }));
   // 响应
   ctx.response.status = 200;
 });
@@ -149,6 +154,13 @@ router.put("/status", jwt(), async (ctx) => {
   if (action === "agree") {
     await createFriendship(requesterUid, targetUid);
   }
+  // 通知客户端
+  wsMap.get(requesterUid)?.send(JSON.stringify({
+    type: "friend-update",
+  }));
+  wsMap.get(targetUid)?.send(JSON.stringify({
+    type: "friend-update",
+  }));
   // 响应
   ctx.response.status = 200;
 });

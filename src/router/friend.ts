@@ -8,6 +8,7 @@ import {
 } from "../dao/friend.ts";
 import { findAccountsByUidArr } from "../dao/account.ts";
 import { findOnlineClients } from "../dao/client.ts";
+import { wsMap } from "./ws.ts";
 
 const router = new oak.Router();
 
@@ -103,6 +104,10 @@ router.delete("/", jwt(), async (ctx) => {
   }
   // 删除好友关系
   await deleteFriendship(uid, friendUid);
+  // 通知客户端
+  wsMap.get(friendUid)?.send(JSON.stringify({
+    type: "friend-update",
+  }));
   // 响应
   ctx.response.status = 200;
 });
