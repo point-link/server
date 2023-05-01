@@ -22,3 +22,13 @@ export const JWT_KEY = await crypto.subtle.importKey(
   false,
   ["sign", "verify"],
 );
+
+// HTTPS_ENABLE
+const _HTTPS_ENABLE = Deno.env.get("HTTPS_ENABLE");
+export const HTTPS_ENABLE = _HTTPS_ENABLE === "true";
+
+// HTTPS_CERT_PATH
+export const HTTPS_CERT_PATH = Deno.env.get("HTTPS_CERT_PATH");
+
+// HTTPS_KEY_PATH
+export const HTTPS_KEY_PATH = Deno.env.get("HTTPS_KEY_PATH");
