@@ -11,7 +11,7 @@ if (HTTPS_ENABLE) {
     cert: Deno.readTextFileSync(HTTPS_CERT_PATH),
     key: Deno.readTextFileSync(HTTPS_KEY_PATH),
   });
-  output.info(`正在监听 433 端口`);
+  output.info(`正在监听 443 端口`);
 } else {
   app.listen({ port: 80 });
   output.info(`正在监听 80 端口`);
